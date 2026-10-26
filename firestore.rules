@@ -1,0 +1,36 @@
+rules_version = '2';
+service cloud.firestore {
+ match /databases/{database}/documents {
+  // All writes go through authenticated callable functions. The Admin SDK
+  // bypasses these rules: server validation lives in functions/validation.js.
+  // members/{uid}: uid, email, displayName <=60, level enum, consent bool,
+  // status pending|approved|declined, createdAt and updatedAt server timestamps.
+  // tournaments/{id}: public display names ONLY, engine state, published bool,
+  // draft|active|completed status, revision, immutable creator/creation time.
+  // albums/{id}: title<=100, description<=600, dateLabel<=40, published bool,
+  // revision, createdBy, createdAt, updatedAt. photos/{id}: scoped storage paths,
+  // alt<=250, caption<=300, credit<=120, visible bool, order 0..2000, timestamps.
+  // audit/{id}: immutable server-written admin action, actorUid, target, timestamp.
+  function isAuthenticated(){return request.auth != null;}
+  function isOwner(uid){return isAuthenticated() && request.auth.uid == uid;}
+  function verifiedIdentity(){return request.auth != null && (request.auth.token.get('email_verified', false) == true || (request.auth.token.get('firebase', {}).get('sign_in_provider', '') == 'phone' && request.auth.token.get('phone_number', '') is string && request.auth.token.get('phone_number', '').size() > 7));}
+  function isAdmin(){return isAuthenticated() && verifiedIdentity() && request.auth.token.admin == true;}
+  function isMember(){return isAuthenticated() && verifiedIdentity() && exists(/databases/$(database)/documents/members/$(request.auth.uid)) && get(/databases/$(database)/documents/members/$(request.auth.uid)).data.status == 'approved';}
+  function isParticipant(){return isAuthenticated() && request.auth.uid in resource.data.participantUids;}
+  function albumPublished(id){return exists(/databases/$(database)/documents/albums/$(id)) && get(/databases/$(database)/documents/albums/$(id)).data.published == true;}
+  match /members/{uid} {allow read: if isOwner(uid) || isAdmin(); allow write: if false; match /practice/{gameId} {allow read: if isOwner(uid) || isAdmin(); allow write: if false;}}
+  match /memberDirectory/{uid} {allow read: if isAdmin() || (isMember() && resource.data.active == true); allow write: if false;}
+  match /games/{id} {allow read: if isAdmin() || isParticipant(); allow write: if false;}
+  match /challenges/{id} {allow read: if isAdmin() || isParticipant(); allow write: if false;}
+  match /memberStats/{uid} {allow read: if isOwner(uid) || isAdmin(); allow write: if false; match /opponents/{opponentId} {allow read: if isOwner(uid) || isAdmin(); allow write: if false;}}
+  // Publication of brackets, outcomes, and photo albums is explicitly requested.
+  match /tournaments/{id} {allow read: if isAdmin() || resource.data.published == true; allow write: if false;}
+  match /albums/{id} {
+   allow read: if isAdmin() || resource.data.published == true;
+   allow write: if false;
+   match /photos/{photoId} {allow read: if isAdmin() || (albumPublished(id) && resource.data.visible == true); allow write: if false;}
+  }
+  match /audit/{id} {allow read: if isAdmin(); allow write: if false;}
+  match /{document=**} {allow read,write: if false;}
+ }
+}

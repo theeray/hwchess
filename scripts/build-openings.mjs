@@ -1,0 +1,3 @@
+import fs from 'node:fs';import {Chess} from 'chess.js';
+const entries=[];for(const volume of 'abcde'){const lines=fs.readFileSync(`public/openings/${volume}.tsv`,'utf8').trim().split('\n').slice(1);for(const line of lines){const [eco,name,pgn]=line.split('\t');const chess=new Chess();chess.loadPgn(pgn);const history=chess.history({verbose:true});entries.push({eco,name,pgn,uci:history.map(m=>m.from+m.to+(m.promotion||'')),fen:chess.fen().split(' ').slice(0,4).join(' ')});}}
+fs.writeFileSync('public/openings/book.json',JSON.stringify(entries));console.log(`${entries.length} opening lines prepared.`);

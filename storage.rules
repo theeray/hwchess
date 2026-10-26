@@ -1,0 +1,17 @@
+rules_version = '2';
+service firebase.storage {
+ match /b/{bucket}/o {
+  function verifiedIdentity(){return request.auth != null && (request.auth.token.get('email_verified', false) == true || (request.auth.token.get('firebase', {}).get('sign_in_provider', '') == 'phone' && request.auth.token.get('phone_number', '') is string && request.auth.token.get('phone_number', '').size() > 7));}
+  function isAdmin(){return request.auth != null && verifiedIdentity() && request.auth.token.admin == true;}
+  function albumExists(albumId){return firestore.exists(/databases/(default)/documents/albums/$(albumId));}
+  function isVisible(albumId,photoId){return albumExists(albumId) && firestore.get(/databases/(default)/documents/albums/$(albumId)).data.published == true && firestore.exists(/databases/(default)/documents/albums/$(albumId)/photos/$(photoId)) && firestore.get(/databases/(default)/documents/albums/$(albumId)/photos/$(photoId)).data.visible == true;}
+  function validImage(){return request.resource.size > 0 && request.resource.size <= 20 * 1024 * 1024 && request.resource.contentType in ['image/jpeg','image/png','image/webp'];}
+  match /albums/{albumId}/{kind}/{photoId} {
+   allow read: if kind in ['originals','previews'] && (isAdmin() || isVisible(albumId,photoId));
+   allow create: if isAdmin() && kind in ['originals','previews'] && albumExists(albumId) && validImage();
+   // Originals and delivery versions are immutable. A replacement is a new photo.
+   allow update,delete: if false;
+  }
+  match /{allPaths=**} {allow read,write: if false;}
+ }
+}

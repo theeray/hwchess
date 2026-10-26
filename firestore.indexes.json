@@ -1,0 +1,30 @@
+{
+  "indexes": [
+    {
+      "collectionGroup": "games",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "participantUids",
+          "arrayConfig": "CONTAINS"
+        },
+        {
+          "fieldPath": "createdAt",
+          "order": "DESCENDING"
+        }
+      ]
+    }
+  ],
+  "fieldOverrides": [
+    {
+      "collectionGroup": "tournaments",
+      "fieldPath": "rounds",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "tournaments",
+      "fieldPath": "roster",
+      "indexes": []
+    }
+  ]
+}

@@ -1,0 +1,5 @@
+import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';import {Chess} from 'chess.js';
+const book=JSON.parse(fs.readFileSync('public/openings/book.json','utf8'));
+const candidates=history=>book.filter(e=>e.uci.length>=history.length&&history.every((m,i)=>e.uci[i]===m));
+test('opening candidates narrow with played moves and recognize the Italian Game',()=>{const moves=['e2e4','e7e5','g1f3','b8c6','f1c4'];let previous=book.length;for(let n=1;n<=moves.length;n++){const next=candidates(moves.slice(0,n));assert.ok(next.length<=previous);assert.ok(next.length>0);previous=next.length;}assert.ok(candidates(moves).some(e=>e.name==='Italian Game'));assert.equal(candidates(['a2a4','a7a5','h2h4','h7h5']).length,0);});
+test('all supplied opening lines are legal and the final indexed position matches',()=>{for(const line of book){const chess=new Chess();for(const uci of line.uci)chess.move({from:uci.slice(0,2),to:uci.slice(2,4),promotion:uci[4]});assert.equal(chess.fen().split(' ').slice(0,4).join(' '),line.fen);}});

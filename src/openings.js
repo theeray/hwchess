@@ -1,0 +1,11 @@
+let bookPromise,book=[],positionMap=new Map();
+export async function loadOpenings(){if(!bookPromise)bookPromise=fetch(import.meta.env.BASE_URL+'openings/book.json').then(r=>{if(!r.ok)throw new Error('Opening guide unavailable.');return r.json();}).then(data=>{book=data;for(const entry of data){const existing=positionMap.get(entry.fen);if(!existing||entry.uci.length>existing.uci.length)positionMap.set(entry.fen,entry);}return book;});return bookPromise;}
+const positionKey=fen=>fen.split(' ').slice(0,4).join(' ');
+export function identifyOpening(chess){const history=chess.history({verbose:true}),moves=history.map(m=>m.from+m.to+(m.promotion||''));let recognized=null;for(const m of history){const candidate=positionMap.get(positionKey(m.after));if(candidate)recognized=candidate;}
+ const candidates=book.filter(entry=>entry.uci.length>=moves.length&&moves.every((m,i)=>entry.uci[i]===m));const namedPosition=positionMap.get(positionKey(chess.fen()));if(namedPosition)recognized=namedPosition;
+ const names=[...new Map(candidates.map(e=>[e.name,e])).values()].sort((a,b)=>a.uci.length-b.uci.length||a.name.localeCompare(b.name));return {recognized,candidates:names,count:names.length,started:moves.length>0,outOfBook:moves.length>0&&names.length===0&&!namedPosition,transposed:!!namedPosition&&names.length===0};
+}
+export function recommendOpenings(games){const firstMoves=games.map(g=>g.pgn?.match(/1\.\s*(\S+)/)?.[1]).filter(Boolean);const count=firstMoves.reduce((a,m)=>(a[m]=(a[m]||0)+1,a),{});const move=Object.keys(count).sort((a,b)=>count[b]-count[a])[0]||'e4';const families=move==='d4'?["Queen's Gambit","London System","Catalan Opening"]:move==='c4'?['English Opening','Réti Opening',"Queen's Gambit"]:move==='Nf3'?['Réti Opening',"King's Indian Attack",'English Opening']:['Italian Game','Ruy Lopez','Scotch Game'];
+ return families.map(family=>{const entry=book.filter(e=>e.name.startsWith(family)).sort((a,b)=>a.uci.length-b.uci.length)[0];return entry?{...entry,reason:firstMoves.length?`An opening to explore alongside your ${move} games.`:'A starting point while your game history grows.'}:null;}).filter(Boolean);
+}
+export function findOpening(eco,name){return book.find(e=>e.eco===eco&&e.name===name);}
