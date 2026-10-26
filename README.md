@@ -9,7 +9,7 @@ The local website, computer chess, live opening guide, browser-session dashboard
 ## Included
 
 - Babe the Blue Knight branding; red and blue chessboards with the rounded traditional pieces requested in the latest reference.
-- Sundays 1:30–3:30 pm, led by Dan Baston at Headwaters Performance Hall; equipment provided and all levels welcome.
+- Sundays 1:30–3:30 pm, led by Dan Batson at Headwaters Performance Hall; equipment provided and all levels welcome.
 - November 22, 2026 tournament, 1–5 pm Central, with a calendar download. Entry fees and tournament time controls remain unannounced.
 - TAD website sponsorship and Headwaters space sponsorship. Watermark is held pending approval.
 - User-supplied club photos, sponsor logos, and links to club news and Region 2 Arts Council.

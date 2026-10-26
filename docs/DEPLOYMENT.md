@@ -5,7 +5,7 @@
 - GitHub repository: https://github.com/theeray/hwchess (confirmed).
 - Firebase account/project selection. Preferred Hosting site ID is `hwchess`; availability is unverified. Do not reuse the existing TAD projects.
 - Owner selection of billing and database/storage location before provisioning. Cloud Functions and Storage may require billing; nothing has been enabled or charged by this build.
-- Administrator activation for Eric, Yohan, and Dan Baston. Their identities must be verified in the selected Firebase project; personal contacts are intentionally not recorded in this public repository.
+- Administrator activation for Eric, Yohan, and Dan Batson. Their identities must be verified in the selected Firebase project; personal contacts are intentionally not recorded in this public repository.
 
 ## Firebase setup
 

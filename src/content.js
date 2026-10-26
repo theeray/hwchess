@@ -1,4 +1,4 @@
-export const club = {name:'Headwaters Chess Club',address:'519 Minnesota Ave NW, Bemidji, MN 56601',email:'info@headwatersmusicandarts.org',phone:'218-444-5606',leader:'Dan Baston',timeZone:'America/Chicago'};
+export const club = {name:'Headwaters Chess Club',address:'519 Minnesota Ave NW, Bemidji, MN 56601',email:'info@headwatersmusicandarts.org',phone:'218-444-5606',leader:'Dan Batson',timeZone:'America/Chicago'};
 export const upcoming = {id:'november-2026',title:'The November Tournament',date:'November 22, 2026',time:'1–5 pm',starts:'2026-11-22T13:00:00-06:00',ends:'2026-11-22T17:00:00-06:00'};
 export const photos = [
 {id:'over-the-board',src:'/assets/over-the-board-web.webp',original:'/assets/over-the-board.jpg',alt:'Two chess players shake hands across a board in the Headwaters Performance Hall.',caption:'A good game starts with a handshake.'},

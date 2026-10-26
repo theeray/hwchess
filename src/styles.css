@@ -23,7 +23,7 @@
 .brand img{mix-blend-mode:normal}
 
 /* Larger brand lockup, with room for navigation at narrower widths. */
-.brand{gap:16px}.brand img{height:144px}.brand>span{font-size:34px}.brand small{font-size:14px;margin-top:8px}
+.brand{gap:16px}.brand img{height:144px}.brand>span{font-size:34px}.brand small{font-size:18px;margin-top:8px}
 @media(max-width:1100px){header{position:relative}.menu-toggle{display:block;background:none;border:1px solid #b8c8d1;padding:10px 14px;font-size:12px}nav{display:none;position:absolute;top:100%;left:0;right:0;background:var(--paper);z-index:5;padding:20px 5% 30px;border-bottom:1px solid var(--line);flex-wrap:wrap;gap:20px;font-size:14px}nav.open{display:flex}}
-@media(max-width:600px){header{gap:12px}.brand{gap:10px}.brand img{height:100px}.brand>span{font-size:26px}.brand small{font-size:11px;margin-top:6px}}
-@media(max-width:380px){.brand>span{font-size:22px}.brand small{font-size:10px}.brand img{height:90px}.menu-toggle{padding:9px}}
+@media(max-width:600px){header{gap:12px}.brand{gap:10px}.brand img{height:100px}.brand>span{font-size:26px}.brand small{font-size:14px;margin-top:6px}}
+@media(max-width:380px){.brand>span{font-size:22px}.brand small{font-size:13px}.brand img{height:90px}.menu-toggle{padding:9px}}
