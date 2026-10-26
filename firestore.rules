@@ -14,7 +14,7 @@ service cloud.firestore {
   function isAuthenticated(){return request.auth != null;}
   function isOwner(uid){return isAuthenticated() && request.auth.uid == uid;}
   function verifiedIdentity(){return request.auth != null && (request.auth.token.get('email_verified', false) == true || (request.auth.token.get('firebase', {}).get('sign_in_provider', '') == 'phone' && request.auth.token.get('phone_number', '') is string && request.auth.token.get('phone_number', '').size() > 7));}
-  function isAdmin(){return isAuthenticated() && verifiedIdentity() && request.auth.token.admin == true;}
+  function isAdmin(){return isAuthenticated() && verifiedIdentity() && request.auth.token.get('admin', false) == true;}
   function isMember(){return isAuthenticated() && verifiedIdentity() && exists(/databases/$(database)/documents/members/$(request.auth.uid)) && get(/databases/$(database)/documents/members/$(request.auth.uid)).data.status == 'approved';}
   function isParticipant(){return isAuthenticated() && request.auth.uid in resource.data.participantUids;}
   function albumPublished(id){return exists(/databases/$(database)/documents/albums/$(id)) && get(/databases/$(database)/documents/albums/$(id)).data.published == true;}
