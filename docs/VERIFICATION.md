@@ -4,17 +4,19 @@ This is a tested development build, not a claim of production security certifica
 
 ## Completed
 
+The full [GitHub Actions verification run](https://github.com/theeray/hwchess/actions/runs/40248982203) passed for commit `b27fb4e86afbf2041d714db77b0d422bfc7be8d0`: 20 domain tests, 8 access-rule tests, the full HTTPS callable integration test, and the production build.
+
 - 20 domain tests: all roster sizes 2–128, byes, advancement, draws, forfeits, corrections, frozen archives, input validation, membership/role input boundaries, legal chess moves, turns, server clock math, correspondence deadlines, draw offers, checkmate, repetition, and all 3,865 opening lines.
 - Firestore emulator access checks: owner/admin reads, private member/contact records, published-only queries, hidden/draft album metadata, verified-email and verified-phone admin requirements, participant-only games, private statistics, and denial of all direct client writes including admin writes.
 - Integration test passed against local Auth and Firestore emulators by invoking callable handlers directly with verified emulator ID tokens. It exercised member applications/approval, rejection of non-admin approval, pending-member challenge denial, bracket generation and finalization, stale-revision rejection, album drafts, member challenge acceptance, turn and revision enforcement, resignation, head-to-head statistics, and idempotent practice saves.
 - Browser checks: Babe's legal response to e4, opening recognition/narrowing, recording a completed practice result, matching opening suggestions, desktop and phone-width layout. Latest pieces match the supplied rounded Neo reference on the existing red and blue board.
 - Production bundling completed successfully.
 
-## Environment-limited checks
+## Verification scope
 
-The Functions emulator HTTP runtime cannot bind its Unix socket in this workspace (`listen EPERM`); direct handler integration verifies business logic and transactions but does not replace a deployed HTTPS callable transport test. The full transport integration test is included for a normal development/CI environment.
+The workspace blocked the Functions emulator Unix socket and Storage-to-Firestore requests, so the full suite was run successfully on GitHub's runner. This covered the real HTTPS callable wrapper, email and emulated SMS sign-in, admin-role enforcement, both same-content and changed-content photo overwrite rejection, and published/hidden photo access. The overwrite rule explicitly requires `resource == null`; updates and deletion are denied.
 
-Storage rules compile, but the local Storage emulator's cross-service requests to Firestore fail through the workspace proxy (`SocketError: other side closed`). Two positive upload/read tests therefore remain unverified here. The privacy checks were not weakened to make those tests pass. Run the complete suite outside this constrained runtime and verify real bucket upload/visibility before launch.
+Production Firebase services are not connected or deployed. Real SMS delivery, email delivery, bucket CORS, and final account roles still require acceptance checks in the chosen Firebase project. No real admin roles have been granted yet, and no SMS was sent to a real phone during testing.
 
 ## Security design
 
